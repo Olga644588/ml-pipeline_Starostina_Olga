@@ -1,7 +1,7 @@
 name: ML Pipeline
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 jobs:
   build-model:
     runs-on: ubuntu-latest
