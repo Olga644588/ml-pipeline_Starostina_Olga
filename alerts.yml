@@ -1,0 +1,43 @@
+groups:
+- name: ml-service-alerts
+  rules:
+  - alert: HighErrorRate
+    expr: |
+      rate(http_requests_total{code=~"5.."}[5m])
+      /
+      rate(http_requests_total[5m]) > 0.05
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High error rate in ML service ({{ $value | humanize }}%)"
+      description: "Error rate exceeds 5% threshold for more than 2 minutes"
+
+  - alert: HighLatency
+    expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+    for: 3m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High latency in ML service (>2s p95)"
+      description: "95th percentile latency exceeds 2 seconds for more than 3 minutes"
+
+  - alert: CanaryUnderperforming
+    expr: |
+      (
+        rate(http_requests_total{version_type="canary", code=~"5.."}[5m])
+        /
+        rate(http_requests_total{version_type="canary"}[5m])
+      )
+      >
+      (
+        rate(http_requests_total{version_type="stable", code=~"5.."}[5m])
+        /
+        rate(http_requests_total{version_type="stable"}[5m])
+      ) * 1.5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Canary version underperforming stable"
+      description: "Canary error rate is 50% higher than stable version"
