@@ -2,3 +2,5 @@ scikit-learn
 numpy
 pandas
 joblib
+Flask==2.3.3
+prometheus-client==0.17.0
