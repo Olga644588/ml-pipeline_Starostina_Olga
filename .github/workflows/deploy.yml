@@ -35,11 +35,12 @@ jobs:
       - name: Check health endpoint
         run: |
           try {
-            $response = Invoke-WebRequest -Uri http://localhost:8080/health -UseBasicParsing -TimeoutSec 30 -ErrorAction Stop
+            $response = Invoke-WebRequest -Uri http://localhost:8080/health -UseBasicParsing -TimeoutSec 10 -ErrorAction Stop
             if ($response.StatusCode -eq 200) {
               Write-Host "Health check passed"
             } else {
-              throw "Health check failed: $($response.StatusCode)"
+              Write-Error "Health check failed: HTTP $($response.StatusCode)"
+              exit 1
             }
           } catch {
             Write-Error "Health check failed. Check logs: docker logs my-app"
