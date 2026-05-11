@@ -10,21 +10,32 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted 
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build and push Docker image
+      - name: Build Docker image
         run: |
           docker build -t ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }} -f controller/Dockerfile .
 
-      - name: Deploy via API
+      - name: Run Docker container locally
         run: |
-          curl -X POST https://api.cloudprovider/deploy \
-            -H "Authorization: Bearer ${{ secrets.CLOUD_TOKEN }}" \
-            -d "image=ghcr.io/${{ github.repository }}:${{ secrets.MODEL_VERSION }}"
+          docker stop my-app || true
+          docker rm my-app || true
 
-      - name: Wait for deployment and check health
+          docker run -d \
+            --name my-app \
+            -p 8080:80 \
+            ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }}
+
+          sleep 10
+
+          docker ps --filter "name=my-app"
+
+      - name: Wait and check local health
         run: |
-          sleep 60  
-          curl --retry 5 --retry-delay 10 -f https://your-app/health
+
+          sleep 30
+
+          curl -f http://localhost:8080/health || \
+          (echo "Health check failed. Check logs: docker logs my-app"; exit 1)
