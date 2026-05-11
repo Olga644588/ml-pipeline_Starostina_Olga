@@ -28,7 +28,10 @@ ERRORS = Counter(
 )
 
 if EXPOSE_METRICS:
-    start_http_server(8001)  
+    try:
+        start_http_server(8001)
+    except Exception as e:
+        print(f"Warning: Could not start metrics server on port 8001: {e}")
 
 @app.route('/health')
 def health():
@@ -52,7 +55,6 @@ def predict():
 
         prediction = len(data['x'])
 
-        
         duration = time.time() - start_time
         LATENCY.labels(request.method, '/predict').observe(duration)
         REQUESTS.labels(request.method, '/predict', MODEL_VERSION).inc()
@@ -80,12 +82,11 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    if request.endpoint != 'metrics': 
+    if request.endpoint != 'metrics':
         duration = time.time() - request.start_time
         LATENCY.labels(request.method, request.path).observe(duration)
     return response
 
 if __name__ == '__main__':
     print(f"Starting ML service v{MODEL_VERSION} on port {PORT}")
-    app.run(host='0.0.0.0', port=PORT)
-        
+    app.run(host='0.0.0.0', port=PORT, debug=False)  

@@ -1,0 +1,32 @@
+http:
+  services:
+    ml-service-stable:
+      loadBalancer:
+        servers:
+          - url: "http://ml-service-stable:8000"
+        healthCheck:
+          path: /health
+          interval: 30s
+
+    ml-service-canary:
+      loadBalancer:
+        servers:
+          - url: "http://ml-service-canary:8000"
+        healthCheck:
+          path: /health
+          interval: 30s
+
+    ml-weighted:
+      weighted:
+        services:
+          - name: ml-service-stable
+            weight: 9
+          - name: ml-service-canary
+            weight: 1
+
+  routers:
+    ml-router:
+      rule: "Host(`localhost`) && (Path(`/predict`) || Path(`/health`))"
+      entrypoints:
+        - web
+      service: ml-weighted
