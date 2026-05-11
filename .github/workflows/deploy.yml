@@ -16,7 +16,7 @@ jobs:
 
       - name: Build and push Docker image
         run: |
-          docker build -t ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }} .
+          docker build -t ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }} -f controller/Dockerfile .
 
       - name: Deploy via API
         run: |
