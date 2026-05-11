@@ -42,4 +42,4 @@ class CanaryController:
     def canary_deployment(self):
         stable_weight = 9
         canary_weight = 1
-        self.update_weights(stable_weight
+        self.update_weights(stable_weight, canary_weight)
