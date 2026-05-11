@@ -1,6 +1,9 @@
 name: Model Deployment
 
 on:
+  workflow_run:
+    workflows: ["ML Pipeline"]  
+    types: [completed]
   push:
     branches: [ master ]
 
