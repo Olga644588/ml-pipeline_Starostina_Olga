@@ -21,13 +21,13 @@ jobs:
 
       - name: Run Docker container locally
         run: |
-          docker stop my-app || true
-          docker rm my-app || true
+          docker stop my-app 2>$null
+          docker rm my-app 2>$null
           docker run -d --name my-app -p 8080:80 ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }}
-          sleep 10
+          Start-Sleep -Seconds 10
           docker ps --filter "name=my-app"
 
       - name: Wait and check local health
         run: |
-          sleep 30
+          sleep 30 || Start-Sleep -Seconds 30
           curl -f http://localhost:8080/health || (echo "Health check failed. Check logs: docker logs my-app"; exit 1)
