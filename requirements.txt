@@ -4,3 +4,4 @@ pandas
 joblib
 Flask==2.3.3
 prometheus-client==0.17.0
+requests==2.31.0
