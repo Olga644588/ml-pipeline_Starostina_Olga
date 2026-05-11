@@ -28,13 +28,21 @@ jobs:
           docker ps --filter "name=my-app"
         shell: powershell
 
-      - name: Wait and check health
+      - name: Wait for application start
+        run: Start-Sleep -Seconds 30
+        shell: powershell
+
+      - name: Check health endpoint
         run: |
-          if [ "$(uname -s)" = "Linux" ] || [ "$(uname -s)" = "Darwin" ]; then
-            sleep 30
-          else
-            powershell -Command "Start-Sleep -Seconds 30"
-          fi
-          curl -f http://localhost:8080/health || \
-          (echo "Health check failed. Check logs: docker logs my-app"; exit 1)
-        shell: bash
+          try {
+            $response = Invoke-WebRequest -Uri http://localhost:8080/health -UseBasicParsing -TimeoutSec 30 -ErrorAction Stop
+            if ($response.StatusCode -eq 200) {
+              Write-Host "Health check passed"
+            } else {
+              throw "Health check failed: $($response.StatusCode)"
+            }
+          } catch {
+            Write-Error "Health check failed. Check logs: docker logs my-app"
+            exit 1
+          }
+        shell: powershell
