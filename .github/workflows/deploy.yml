@@ -29,12 +29,12 @@ jobs:
         shell: powershell
 
       - name: Wait for application start
-        run: sleep 30
-        shell: bash
+        uses: actions/sleep@v1
+        with:
+          seconds: 30
 
       - name: Check health endpoint
         run: |
           curl -f http://localhost:8080/health || \
           (echo "Health check failed. Check logs: docker logs my-app"; exit 1)
         shell: bash
-
