@@ -30,4 +30,11 @@ jobs:
       - name: Wait and check local health
         run: |
           sleep 30 || Start-Sleep -Seconds 30
-          curl -f http://localhost:8080/health || (echo "Health check failed. Check logs: docker logs my-app"; exit 1)
+          if (curl -f http://localhost:8080/health) {
+            Write-Host "Health check passed"
+          } else {
+            Write-Error "Health check failed. Check logs: docker logs my-app"
+            exit 1
+          }
+        shell: powershell
+
