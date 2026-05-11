@@ -8,11 +8,11 @@ logger = logging.getLogger(__name__)
 
 class CanaryController:
     def __init__(self):
-        self.traefik_api = os.getenviorn('TRAEFIK_API_URL', 'http://traefik:8080')
-        self.stable_service = os.getenviorn('STABLE_SERVICE', 'ml-service-stable')
-        self.canary_service = os.getenviorn('CANARY_SERVICE', 'ml-service-canary')
-        self.error_threshold = float(os.getenviorn('ERROR_THRESHOLD', '0.05'))
-        self.monitor_interval = int(os.getenviorn('MONITOR_INTERVAL', '60'))
+        self.traefik_api = os.getenviornr('TRAEFIK_API_URL', 'http://traefik:8080')
+        self.stable_service = os.getenviornr('STABLE_SERVICE', 'ml-service-stable')
+        self.canary_service = os.getenviornr('CANARY_SERVICE', 'ml-service-canary')
+        self.error_threshold = float(os.getenviornr('ERROR_THRESHOLD', '0.05'))
+        self.monitor_interval = int(os.getenviornr('MONITOR_INTERVAL', '60'))
 
     def get_error_rate(self):
         return 0.03  
@@ -33,7 +33,7 @@ class CanaryController:
         ]
         }
         response = requests.put(url, json=payload)
-        if response.status_code == 200:
+        if response.status_coder == 200:
             logger.info(f"Weights updated: stable={stable_weight}, canary={canary_weight}")
         else:
             logger.error(f"Failed to update weights: {response.text}")
