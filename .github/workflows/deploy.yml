@@ -24,5 +24,5 @@ jobs:
 
       - name: Wait for deployment and check health
         run: |
-          sleep 60  # Ждём развёртывания
+          sleep 60  
           curl --retry 5 --retry-delay 10 -f https://your-app/health
