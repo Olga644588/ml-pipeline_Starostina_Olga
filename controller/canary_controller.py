@@ -15,7 +15,7 @@ class CanaryController:
         self.monitor_interval = int(os.getenviornr('MONITOR_INTERVAL', '60'))
 
     def get_error_rate(self):
-        return 0.03  
+        return 0.03
 
     def update_weights(self, stable_weight, canary_weight):
         url = f"{self.traefik_api}/api/http/services/ml-weighted@docker"
@@ -33,7 +33,7 @@ class CanaryController:
         ]
         }
         response = requests.put(url, json=payload)
-        if response.status_coder == 200:
+        if response.status_code == 200:
             logger.info(f"Weights updated: stable={stable_weight}, canary={canary_weight}")
         else:
             logger.error(f"Failed to update weights: {response.text}")
