@@ -17,7 +17,8 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build -t ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }} -f controller/Dockerfile .
+          docker build -t ghcr.io/olgas/ml-pipeline:${{ secrets.MODEL_VERSION }} -f Dockerfile .
+
 
       - name: Run Docker container locally
         run: |
